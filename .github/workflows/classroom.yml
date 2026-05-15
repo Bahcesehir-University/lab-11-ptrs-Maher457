@@ -1,0 +1,60 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Pointer Basics
+      id: pointer-basics
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Pointer Basics
+        setup-command: ''
+        command: make test_1
+        timeout: 10
+        max-score: 25
+    - name: swapInts
+      id: swapints
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: swapInts
+        setup-command: ''
+        command: make test_2
+        timeout: 10
+        max-score: 25
+    - name: fillArray and sumArray
+      id: fillarray-and-sumarray
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: fillArray and sumArray
+        setup-command: ''
+        command: make test_3
+        timeout: 10
+        max-score: 25
+    - name: Challange Function
+      id: challange-function
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Challange Function
+        setup-command: ''
+        command: make test_4
+        timeout: 10
+        max-score: 25
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        POINTER-BASICS_RESULTS: "${{steps.pointer-basics.outputs.result}}"
+        SWAPINTS_RESULTS: "${{steps.swapints.outputs.result}}"
+        FILLARRAY-AND-SUMARRAY_RESULTS: "${{steps.fillarray-and-sumarray.outputs.result}}"
+        CHALLANGE-FUNCTION_RESULTS: "${{steps.challange-function.outputs.result}}"
+      with:
+        runners: pointer-basics,swapints,fillarray-and-sumarray,challange-function
